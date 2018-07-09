@@ -1,8 +1,13 @@
+/*
+Author: Steve Flynn, Data Agile
 
+*/
 
 --Create the Date Dimension table
 --Drop it if it exists
-DROP TABLE IF EXISTS [dbo].[DimDate]
+DROP TABLE IF EXISTS [dbo].[DimDate] --SQL 2016 and above
+--for older versions use 
+--IF OBJECT_ID('dbo.DimDate') IS NOT NULL DROP TABLE [dbo].[DimDate]
 GO
 
 /****** Object:  Table [dbo].[DimDate]    Script Date: 08/07/2018 17:38:27 ******/
