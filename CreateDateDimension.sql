@@ -13,28 +13,37 @@ SET QUOTED_IDENTIFIER ON
 GO
 
 CREATE TABLE [dbo].[DimDate](
-	[DateId] [int] NULL,
-	[DayofMonth] [tinyint] NULL,
-	[DayName] [nvarchar](30) NULL,
-	[DayShortName] [nvarchar](3) NULL,
-	[Week] [tinyint] NULL,
-	[CalenderMonth] [tinyint] NULL,
-	[CalendarMonthName] [nvarchar](30) NULL,
-	[CalendarMonthShortName] [nvarchar](3) NULL,
-	[CalendarQuarter] [int] NULL,
-	[CalendarYear] [int] NULL,
-	[Weekday] [int] NULL,
-	[DayOfYear] [int] NULL,
-	[FiscalYear] [varchar](7) NULL,
-    [FiscalQuarter] [tinyint] NULL,
-    [FiscalQuarterName] nvarchar(2) NULL,
-    [FiscalMonth] [tinyint] NULL,
-	[IsLastDayOfMonth] [int] NOT NULL,
-	[IsWeekday] [int] NOT NULL,
-	[UKShortDate] [char](8) NULL,
-	[date] [date] NULL
+	[DateId] [int] NOT NULL,
+	[DayofMonth] [tinyint] NOT NULL,
+	[DayName] [nvarchar](30) NOT NULL,
+	[DayShortName] [nvarchar](3) NOT NULL,
+	[Week] [tinyint] NOT NULL,
+	[CalenderMonth] [tinyint] NOT NULL,
+	[CalendarMonthName] [nvarchar](30) NOT NULL,
+	[CalendarMonthShortName] [nvarchar](3) NOT NULL,
+	[CalendarQuarter] [int] NOT NULL,
+	[CalendarYear] [int] NOT NULL,
+	[Weekday] [int] NOT NULL,
+	[DayOfYear] [int] NOT NULL,
+	[FiscalYear] [varchar](7) NOT NULL,
+    [FiscalQuarter] [tinyint] NOT NULL,
+    [FiscalQuarterName] nvarchar(2) NOT NULL,
+    [FiscalMonth] [tinyint] NOT NULL,
+	[IsLastDayOfMonth] [int]  NOT NULL,
+	[IsWeekday] [int]  NOT NULL,
+	[UKShortDate] [char](8) NOT NULL,
+	[date] [date] NOT NULL,
+    CONSTRAINT [PK_DimDate] PRIMARY KEY CLUSTERED 
+(
+	[DateId] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
 ) ON [PRIMARY]
+
 GO
+
+--CREATE INDEX PKdate PRIMARY KEY
+
+
 
 --INSERT the dates
 --Change the @dt value to the desired start date
@@ -62,10 +71,10 @@ BEGIN
     ,Year(@dt)                                      CalendarYear
     ,DATEPART(WEEKDAY,@dt)                          Weekday
     ,DATEPART(DAYOFYEAR,@dt)                        DayOfYear
-    ,CASE WHEN MONTH(@dt) > 3 THEN
-        CAST(YEAR(@dt) AS CHAR(4))  + '-' + CAST(RIGHT(YEAR(@dt) + 1,2) AS CHAR(2))
-     ELSE CAST(YEAR(@dt)-1 AS CHAR(4)) + '-' + CAST(RIGHT(YEAR(@dt),2) AS CHAR(2))
-    END AS                                          FiscalYear
+    ,IIF (MONTH(@dt) > 3
+         ,CAST(YEAR(@dt) AS CHAR(4))  + '-' + CAST(RIGHT(YEAR(@dt) + 1,2) AS CHAR(2))
+         ,CAST(YEAR(@dt)-1 AS CHAR(4)) + '-' + CAST(RIGHT(YEAR(@dt),2) AS CHAR(2)))
+     FiscalYear
     ,IIF(DATEPART(Q,@dt) > 1, DATEPART(Q,@dt) - 1, DATEPART(Q,@dt) + 3)FiscalQuarter
     ,IIF(DATEPART(Q,@dt) > 1, 'Q' + CAST(DATEPART(Q,@dt) - 1 AS CHAR(1)), 'Q' + CAST(DATEPART(Q,@dt) + 3 AS CHAR(1))) FiscalQuarter
     ,IIF(MONTH(@dt) > 3, MONTH(@dt) -3, MONTH(@dt) + 9) FiscalMonth
@@ -76,5 +85,6 @@ BEGIN
 
      SET @dt = DATEADD(DAY,1,@dt)
 END
+
 
 -- delete dbo.DimDate 
