@@ -46,10 +46,6 @@ CREATE TABLE [dbo].[DimDate](
 
 GO
 
---CREATE INDEX PKdate PRIMARY KEY
-
-
-
 --INSERT the dates
 --Change the @dt value to the desired start date
 --and the @endDate value to the desired end date of the dimension
